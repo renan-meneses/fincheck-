@@ -16,7 +16,6 @@ services:
       EMAIL_USER: "email@example.com"
       EMAIL_PASSWORD: "emailexamplepassword"
     
-
   frontend:
     build:
       context: ./frontend
