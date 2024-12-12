@@ -3,30 +3,38 @@ version: '3.8'
 services:
   app:
     build:
-      context: ./api # Diretório onde está o Dockerfile
+      context: ./app # Diretório onde está o Dockerfile
       dockerfile: Dockerfile
-    container_name: fincheck-Backend
+    container_name: nestjs-app
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: "postgresql://docker:docker@db:5432/postgresql?schema=public"
+      DATABASE_URL: "postgresql://postgres:secret@192.168.0.7:5433/finteheck?schema=public"
       JWT_SECRET: "fincheckapi"
       RESET_PASSWORD_JWT_SECRET: "resetpasswordfincheckapi"
-      FRONTEND_URL: "http://localhost:5173"
+      FRONTEND_URL: "http://192.168.0.1:5173"
       EMAIL_USER: "email@example.com"
       EMAIL_PASSWORD: "emailexamplepassword"
-    
+    command: ["npm", "run", "start:dev"] # Sobrescreve o comando do Dockerfile
+    volumes:
+      - ./app:/usr/src/app # Monta o diretório local para hot reload
+      - /usr/src/app/node_modules # Previne problemas com node_modules
+    depends_on:
+      - db
+
   frontend:
     build:
-      context: ./frontend
+      context: ./frontend # Diretório onde está o código do React
       dockerfile: Dockerfile
-    container_name: fincheck-Frontend
+    container_name: react-frontend
     ports:
-      - "5173:3000"
+      - "5173:5173"
+    environment:
+      REACT_APP_API_URL: "http://192.168.0.1:3000"
     volumes:
-      - /app/node_modules
-    command: ["npm", "run", "dev"]
+      - ./frontend:/usr/src/app # Monta o diretório local para hot reload
+      - /usr/src/app/node_modules # Previne problemas com node_modules
+    command: ["npm", "start"]
 
 volumes:
   postgres-data:
-
