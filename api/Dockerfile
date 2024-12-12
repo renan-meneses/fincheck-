@@ -5,7 +5,7 @@ FROM node:18-alpine
 WORKDIR /usr/src/app
 
 # Define variáveis de ambiente
-    DATABASE_URL="postgresql://postgres:secret@192.168.0.7:5433/finteheck?schema=public"
+    DATABASE_URL="postgresql://postgres:secret@192.168.0.7:5433/finteheck?schema=public" \
     JWT_SECRET="fincheckapi" \
     RESET_PASSWORD_JWT_SECRET="resetpasswordfincheckapi" \
     FRONTEND_URL="http://localhost:5173" \
