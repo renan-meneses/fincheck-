@@ -1,75 +1,33 @@
 version: '3.8'
 
 services:
-  # Serviço do Backend
-  backend:
-    container_name: fincheck-backend
+  app:
     build:
-      context: ./api
+      context: ./api # Diretório onde está o Dockerfile
+      dockerfile: Dockerfile
+    container_name: fincheck-Backend
     ports:
-      - "3000:3000" # A porta do backend, adapte conforme necessário
-    volumes:
-      - ./api:/app
+      - "3000:3000"
     environment:
-      - DATABASE_URL="postgresql://docker:docker@localhost:5433/postgresql?schema=public"
-      - JWT_SECRET=fincheckapi
-      - RESET_PASSWORD_JWT_SECRET=resetpasswordfincheckapi
-      - FRONTEND_URL="http://localhost:5173"
-      - EMAIL_USER=email@example.com
-      - EMAIL_PASSWORD=emailexamplepassword
-    depends_on:
-      - db
-    networks:
-      - fincheck-network
-    command: >
-      bash -c "npm install && npx prisma migrate dev && npm run start:dev"
+      DATABASE_URL: "postgresql://docker:docker@db:5432/postgresql?schema=public"
+      JWT_SECRET: "fincheckapi"
+      RESET_PASSWORD_JWT_SECRET: "resetpasswordfincheckapi"
+      FRONTEND_URL: "http://localhost:5173"
+      EMAIL_USER: "email@example.com"
+      EMAIL_PASSWORD: "emailexamplepassword"
+    
 
-  # Serviço do Frontend
   frontend:
-    container_name: fincheck-frontend
     build:
       context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fincheck-Frontend
     ports:
-      - "3001:3000" # A porta do frontend, adapte conforme necessário
+      - "5173:3000"
     volumes:
-      - ./frontend:/app
-    environment:
-      - VITE_API_URL=http://localhost:3000
+      - /app/node_modules
+    command: ["npm", "run", "dev"]
 
-    networks:
-      - fincheck-network
-    command: >
-      bash -c "npm install && npm run dev"
-
-  # Serviço do banco de dados (usando Postgres como exemplo)
-  db:
-    container_name: fincheck-db
-    image: postgres:13 # Adapte a versão conforme necessário
-    environment:
-      - POSTGRES_USER=fincheckuser
-      - POSTGRES_PASSWORD=fincheckpass
-      - POSTGRES_DB=fincheckdb
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - fincheck-network
-    ports:
-      - "5432:5432" # Porta do PostgreSQL, pode ser alterada conforme a configuração
-
-  # Serviço para o Redis (caso o projeto use Redis)
-  redis:
-    container_name: fincheck-redis
-    image: redis:alpine
-    ports:
-      - "6379:6379" # Porta do Redis
-    networks:
-      - fincheck-network
-
-# Volumes para persistência de dados
 volumes:
-  postgres_data:
+  postgres-data:
 
-# Redes internas para comunicação entre os serviços
-networks:
-  fincheck-network:
-    driver: bridge
