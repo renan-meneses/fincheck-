@@ -5,7 +5,7 @@ FROM node:18-alpine
 WORKDIR /usr/src/app
 
 # Define variáveis de ambiente
-    ENV DATABASE_URL="postgresql://postgres:secret@192.168.0.7:5433/finteheck?schema=public" \
+ENV DATABASE_URL="postgresql://postgres:secret@192.168.0.7:5433/finteheck?schema=public" \
     JWT_SECRET="fincheckapi" \
     RESET_PASSWORD_JWT_SECRET="resetpasswordfincheckapi" \
     FRONTEND_URL="http://localhost:5173" \
@@ -29,4 +29,4 @@ COPY . ./
 EXPOSE 3000
 
 # Define o comando para iniciar a aplicação
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start:dev"]
